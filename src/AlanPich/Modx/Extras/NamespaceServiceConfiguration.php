@@ -20,26 +20,44 @@ namespace AlanPich\Modx\Extras;
  * 3) As an object
  *      $value = $conf->myKey;
  *      $conf->myKey = 'newValue';
+ * 4) With getter method
+ *      $value = $conf->get('myKey');
  *
  * @package AlanPich\Modx\Extras
  */
 class NamespaceServiceConfiguration implements \ArrayAccess
 {
-    /** @var  \modX */
+    /**
+     * MODX Instance
+     *
+     * @var  \modX
+     */
     protected $modx;
-    /** @var array */
+    /**
+     * Service Namespace
+     *
+     * @var string
+     */
+    protected $namespace;
+    /**
+     * Config properties
+     *
+     * @var array
+     */
     protected $conf = array();
 
 
     /**
      * Constructor
      *
-     * @param \modX $modx
-     * @param array $defaults
+     * @param string $namespace
+     * @param \modX  $modx
+     * @param array  $defaults
      */
-    public function __construct(\modX $modx, $defaults = array())
+    public function __construct($namespace, \modX $modx, $defaults = array())
     {
         $this->modx = $modx;
+        $this->namespace = $namespace;
         $this->conf = $defaults;
     }
 
@@ -68,6 +86,31 @@ class NamespaceServiceConfiguration implements \ArrayAccess
     }
 
     /**
+     * Get a config param
+     *
+     * @param string $key
+     * @return mixed
+     */
+    public function get($key)
+    {
+        // First, check for a systemSetting override
+        $sysName = $this->namespace.'.'.$key;
+        $opt = $this->modx->getOption($sysName, null, null);
+        if (!is_null($opt)) {
+            return $opt;
+        }
+        if (!isset($this->conf[$key])) {
+            return null;
+        }
+        return $this->conf[$key];
+    }
+
+    public function set($key,$value)
+    {
+        throw new \Exception("Method NamespaceServiceConfiguration::set has not been implemented");
+    }
+
+    /**
      * Whether a offset exists
      *
      * @param mixed $offset  An offset to check for
@@ -87,18 +130,7 @@ class NamespaceServiceConfiguration implements \ArrayAccess
      */
     public function offsetGet($offset)
     {
-        // First, check for a systemSetting override
-        $sysName = 'tvimageplus.' . $offset;
-        $opt = $this->modx->getOption($sysName, null, null);
-        if (!is_null($opt)) {
-            return $opt;
-        }
-
-        if (!isset($this->conf[$offset])) {
-            return null;
-        }
-
-        return $this->conf[$offset];
+        return $this->get($offset);
     }
 
     /**

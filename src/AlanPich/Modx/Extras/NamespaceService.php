@@ -17,17 +17,23 @@ abstract class NamespaceService
     /** @var modX  */
     public $modx;
 
+    /** @var string */
+    public $namespace;
 
     /**
      * Constructor
      *
      * @param modX  $modx
      * @param array $config
+     * @throws \Exception
      */
     public function __construct(modX $modx, $config = array())
     {
         $this->modx = $modx;
-        $this->config = new NamespaceServiceConfiguration($modx,$this->getDefaultConfig());
+        if(!$this->namespace){
+            throw new \Exception(__CLASS__."->namespace is not defined");
+        }
+        $this->config = new NamespaceServiceConfiguration($this->namespace,$modx,$this->getDefaultConfig());
     }
 
     /**
