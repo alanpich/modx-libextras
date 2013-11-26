@@ -1,0 +1,22 @@
+{
+    "name": "alanpich/modx-libextras",
+    "description": "Useful classes for creating Extras for MODX Revolution",
+    "keywords": ["modx","modx-extras"],
+    "homepage": "https://github.com/alanpich/modx-libextras",
+
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Alan Pich",
+            "email": "alan.pich@gmail.com"
+        }
+    ],
+    "require": {
+
+    },
+    "autoload": {
+        "psr-0": {
+            "AlanPich\\Modx\\Extras": "src/"
+        }
+    }
+}
